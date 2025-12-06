@@ -26,12 +26,9 @@ object HotelAnalysis {
         val bookings = lines.flatMap(parseLine).toList
         source.close()
 
-        if (bookings.nonEmpty) {
-          println(s"Successfully loaded ${bookings.size} records.")
-          // TODO: processData(bookings)
-        } else {
-          println("Error: Dataset is empty.")
-        }
+        // CHANGE: Now we actually call the function
+        if (bookings.nonEmpty) processData(bookings)
+        else println("Error: Dataset is empty.")
 
       case Failure(e) =>
         println(s"File read error: ${e.getMessage}")
@@ -60,5 +57,14 @@ object HotelAnalysis {
         margin    = cols(23).toDouble
       )
     }.toOption
+  }
+
+  // NEW FUNCTION: Logic for Question 1 only
+  def processData(data: List[HotelBooking]): Unit = {
+    println("--- Hotel Analysis Results ---\n")
+
+    // Question 1
+    val topCountry = data.groupBy(_.country).maxBy(_._2.size)
+    println(s"1. Highest Bookings: ${topCountry._1} (${topCountry._2.size})")
   }
 }
