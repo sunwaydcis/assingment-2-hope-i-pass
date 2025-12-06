@@ -61,11 +61,11 @@ object HotelAnalysis {
   def processData(data: List[HotelBooking]): Unit = {
     println("--- Hotel Analysis Results ---\n")
 
-    // 1. Top Country
+    // Question 1
     val topCountry = data.groupBy(_.country).maxBy(_._2.size)
     println(s"1. Highest Bookings: ${topCountry._1} (${topCountry._2.size})")
 
-    // 2. Best Options
+    // Question 2
     // calculate stats per hotel
     val hotelStats = data.groupBy(_.hotelName).map { case (hotel, list) =>
       val avgPrice = list.map(_.price).sum / list.size
@@ -78,6 +78,17 @@ object HotelAnalysis {
     println(s"2b. Highest Discount: ${hotelStats.maxBy(_._3)._1}")
     println(s"2c. Lowest Margin: ${hotelStats.minBy(_._4)._1}")
 
-    
+    // Question 3
+    val profitability = data.groupBy(_.hotelName).map { case (hotel, list) =>
+      val totalProfit = list.map(b => b.price * b.margin).sum
+      val visitors = list.map(_.people).sum
+      (hotel, totalProfit, visitors)
+    }
+
+    val winner = profitability.maxBy(_._2)
+    println(s"3. Most Profitable: ${winner._1}")
+    println(s"   Profit: ${f"${winner._2}%.2f"}")
+    println(s"   Visitors: ${winner._3}")
+
   }
 }
