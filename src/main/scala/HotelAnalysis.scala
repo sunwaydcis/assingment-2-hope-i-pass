@@ -26,7 +26,6 @@ object HotelAnalysis {
         val bookings = lines.flatMap(parseLine).toList
         source.close()
 
-        // CHANGE: Now we actually call the function
         if (bookings.nonEmpty) processData(bookings)
         else println("Error: Dataset is empty.")
 
@@ -59,12 +58,26 @@ object HotelAnalysis {
     }.toOption
   }
 
-  // NEW FUNCTION: Logic for Question 1 only
   def processData(data: List[HotelBooking]): Unit = {
     println("--- Hotel Analysis Results ---\n")
 
-    // Question 1
+    // 1. Top Country
     val topCountry = data.groupBy(_.country).maxBy(_._2.size)
     println(s"1. Highest Bookings: ${topCountry._1} (${topCountry._2.size})")
+
+    // 2. Best Options
+    // calculate stats per hotel
+    val hotelStats = data.groupBy(_.hotelName).map { case (hotel, list) =>
+      val avgPrice = list.map(_.price).sum / list.size
+      val avgDisc  = list.map(_.discount).sum / list.size
+      val avgMarg  = list.map(_.margin).sum / list.size
+      (hotel, avgPrice, avgDisc, avgMarg)
+    }
+
+    println(s"2a. Cheapest Price: ${hotelStats.minBy(_._2)._1}")
+    println(s"2b. Highest Discount: ${hotelStats.maxBy(_._3)._1}")
+    println(s"2c. Lowest Margin: ${hotelStats.minBy(_._4)._1}")
+
+    
   }
 }
